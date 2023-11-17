@@ -9,8 +9,10 @@ type IOption interface {
 	TakeEndpoint() string
 	TakeAccessKey() string
 	TakeSecretKey() string
-	IsDebug() string
-	DebugLevel() string
+	TakeTopic() string
+	TakeGroup() string
+	//IsDebug() string
+	//DebugLevel() string
 }
 
 type IConsumer interface {
