@@ -5,29 +5,24 @@ import (
 )
 
 type Producer struct {
-	*Option
+	opt IProducerOption
 }
 
-func NewProducer(opt IOption) IProducer {
+func NewProducer(opt IProducerOption) IProducer {
 	return &Producer{
-		&Option{
-			opt: opt,
-		},
+		opt: opt,
 	}
 }
 
-func (c *Producer) makeOptions() []mq.ProducerOption {
-	return []mq.ProducerOption{
-		mq.WithTopics(c.opt.TakeTopic()),
-	}
-}
+//func (c *Producer) makeOptions() []mq.ProducerOption {
+//	return []mq.ProducerOption{
+//		mq.WithTopics(c.opt.TakeTopic()),
+//	}
+//}
 
 func (c *Producer) Connect() (product mq.Producer) {
 	var err error
-	config := c.makeConfig()
-	config.ConsumerGroup = c.opt.TakeGroup()
-
-	if product, err = mq.NewProducer(config, c.makeOptions()...); err != nil {
+	if product, err = mq.NewProducer(c.opt.TakeConfig(), c.opt.TakeOptions()...); err != nil {
 		panic(err)
 	}
 

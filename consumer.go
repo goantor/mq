@@ -1,8 +1,8 @@
 package rocket
 
 import (
+	"fmt"
 	mq "github.com/apache/rocketmq-clients/golang"
-	"time"
 )
 
 // func InitLog() {
@@ -13,31 +13,20 @@ import (
 
 // Consumer 消费者
 type Consumer struct {
-	*Option
+	opt IConsumerOption
 }
 
-func NewConsumer(opt IOption) *Consumer {
+func NewConsumer(opt IConsumerOption) *Consumer {
 	return &Consumer{
-		&Option{opt: opt},
+		opt: opt,
 	}
 }
 
-func (c *Consumer) makeOptions(await time.Duration) []mq.SimpleConsumerOption {
-	return []mq.SimpleConsumerOption{
-		mq.WithAwaitDuration(await),
-		mq.WithSubscriptionExpressions(map[string]*mq.FilterExpression{
-			c.opt.TakeTopic(): mq.SUB_ALL,
-		}),
-	}
-}
-
-func (c *Consumer) Connect(await time.Duration) (connect mq.SimpleConsumer) {
+func (c *Consumer) Connect() (connect mq.SimpleConsumer) {
 	var err error
-	opts := c.makeOptions(await)
-	config := c.makeConfig()
-	config.ConsumerGroup = c.opt.TakeGroup()
-
-	if connect, err = mq.NewSimpleConsumer(config, opts...); err != nil {
+	//fmt.Printf()
+	fmt.Printf("%v\n", c.opt)
+	if connect, err = mq.NewSimpleConsumer(c.opt.TakeConfig(), c.opt.TakeOptions()...); err != nil {
 		panic(err)
 	}
 
